@@ -101,6 +101,9 @@ test-markdown: ## Run markdown tests only
 test-api: ## Run API tests only
 	docker compose run --rm web uv run pytest todo/tests/test_api.py -v
 
+test-graphql: ## Run GraphQL tests only
+	docker compose run --rm web uv run pytest todo/tests/test_graphql.py -v
+
 test-failed: ## Re-run only failed tests
 	docker compose run --rm web uv run pytest --lf
 

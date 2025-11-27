@@ -27,9 +27,9 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     # Web UI routes
     path("", include("todo.urls")),
-    # API routes
+    # REST API routes
     path("api/", include("todo.api.urls")),
-    # API Schema and Documentation
+    # REST API Schema and Documentation
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
         "api/docs/",
@@ -41,4 +41,6 @@ urlpatterns = [
         SpectacularRedocView.as_view(url_name="schema"),
         name="redoc",
     ),
+    # GraphQL API
+    path("graphql/", include("todo.graphql.urls")),
 ]
