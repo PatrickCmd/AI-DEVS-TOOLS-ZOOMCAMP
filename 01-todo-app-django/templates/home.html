@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load markdown_extras %}
+
+{% block title %}Home - TODO App{% endblock %}
+
+{% block content %}
+<div class="todo-list">
+    <h2>My TODOs</h2>
+
+    {% if todos %}
+        <div class="todos">
+            {% for todo in todos %}
+                <div class="todo-item {% if todo.is_resolved %}resolved{% endif %}">
+                    <div class="todo-content">
+                        <h3>{{ todo.title }}</h3>
+                        {% if todo.description %}
+                            <div class="todo-description">{{ todo.description|markdown }}</div>
+                        {% endif %}
+                        {% if todo.due_date %}
+                            <p class="due-date">Due: {{ todo.due_date|date:"Y-m-d H:i" }}</p>
+                        {% endif %}
+                        <p class="timestamps">
+                            Created: {{ todo.created_at|date:"Y-m-d H:i" }}
+                            {% if todo.updated_at %}
+                                | Updated: {{ todo.updated_at|date:"Y-m-d H:i" }}
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="todo-actions">
+                        <form method="post" action="{% url 'todo_toggle' todo.pk %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-toggle">
+                                {% if todo.is_resolved %}Mark Unresolved{% else %}Mark Resolved{% endif %}
+                            </button>
+                        </form>
+                        <a href="{% url 'todo_edit' todo.pk %}" class="btn-edit">Edit</a>
+                        <a href="{% url 'todo_delete' todo.pk %}" class="btn-delete">Delete</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="no-todos">No TODOs yet. <a href="{% url 'todo_create' %}">Create one</a>!</p>
+    {% endif %}
+</div>
+{% endblock %}
