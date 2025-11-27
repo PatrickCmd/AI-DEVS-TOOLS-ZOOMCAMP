@@ -4,18 +4,33 @@ A fully functional TODO application built with Django, PostgreSQL, Docker, and c
 
 ## Features
 
+### Web Interface
 - Create, edit, and delete TODOs
 - Assign due dates to tasks with native date/time picker
 - Mark TODOs as resolved/unresolved
 - **Markdown support** for rich TODO descriptions (headers, lists, code, tables, etc.)
 - Clean and responsive UI with modern CSS
 - Admin panel for managing TODOs
-- Comprehensive test suite with 99% coverage (38 tests)
+
+### REST API
+- Full RESTful API with Django REST Framework
+- Complete CRUD operations via HTTP
+- Pagination, filtering, and search support
+- Custom actions (toggle resolved, list resolved/unresolved/overdue)
+- **Interactive Swagger/OpenAPI documentation** at `/api/docs/`
+- JSON responses with proper HTTP status codes
+
+### Testing
+- Comprehensive test suite with 99% coverage (69 tests)
+- 31 API-specific tests covering all endpoints
+- Automated testing with pytest
 
 ## Technology Stack
 
 - **Backend**: Django 5.2.8
 - **Database**: PostgreSQL 15
+- **API**: Django REST Framework 3.14
+- **API Docs**: drf-spectacular (OpenAPI/Swagger)
 - **Container**: Docker & Docker Compose
 - **Package Manager**: uv
 - **Testing**: pytest with pytest-django
@@ -31,18 +46,24 @@ A fully functional TODO application built with Django, PostgreSQL, Docker, and c
 │   └── urls.py            # URL routing
 ├── todo/                  # TODO app
 │   ├── models.py          # Database models (Todo model)
-│   ├── views.py           # Class-based views
+│   ├── views.py           # Class-based views (web UI)
 │   ├── forms.py           # TodoForm with date picker
-│   ├── urls.py            # App URL patterns
+│   ├── urls.py            # Web URL patterns
 │   ├── admin.py           # Admin configuration
+│   ├── api/               # REST API module
+│   │   ├── __init__.py    # API module initialization
+│   │   ├── serializers.py # DRF serializers
+│   │   ├── views.py       # API ViewSets (REST API)
+│   │   └── urls.py        # API URL patterns
 │   ├── templatetags/      # Custom template filters
 │   │   └── markdown_extras.py  # Markdown filter
-│   └── tests/             # Test suite (38 tests)
+│   └── tests/             # Test suite (69 tests)
 │       ├── test_models.py
 │       ├── test_views.py
 │       ├── test_urls.py
 │       ├── test_templates.py
-│       └── test_markdown.py
+│       ├── test_markdown.py
+│       └── test_api.py    # API tests (31 tests)
 ├── templates/             # HTML templates
 │   ├── base.html
 │   ├── home.html
@@ -123,8 +144,10 @@ We implemented comprehensive tests covering:
 - View tests (11 tests)
 - URL tests (5 tests)
 - Template tests (6 tests)
+- Markdown tests (9 tests)
+- API tests (31 tests)
 
-**Total**: 29 tests with 99% code coverage
+**Total**: 69 tests with 99% code coverage
 
 ## Setup Instructions
 
@@ -169,6 +192,9 @@ The application will:
 - **Admin Panel**: http://localhost:8000/admin
   - Username: `admin`
   - Password: `admin123`
+- **REST API**: http://localhost:8000/api/todos/
+- **Swagger Docs**: http://localhost:8000/api/docs/
+- **ReDoc**: http://localhost:8000/api/redoc/
 
 ### Using the Makefile
 
@@ -196,6 +222,7 @@ make test-cov      # Run tests with coverage report
 make test-models   # Run model tests only
 make test-views    # Run view tests only
 make test-markdown # Run markdown tests only
+make test-api      # Run API tests only
 ```
 
 #### Manual Commands
@@ -292,25 +319,84 @@ The application supports full Markdown formatting in TODO descriptions! You can 
 
 See the [Markdown Guide](MARKDOWN_GUIDE.md) for detailed examples and usage.
 
+## REST API
+
+The application provides a complete RESTful API built with Django REST Framework. See [API_GUIDE.md](API_GUIDE.md) for comprehensive documentation.
+
+### Quick API Examples
+
+```bash
+# List all TODOs
+curl http://localhost:8000/api/todos/
+
+# Create a TODO
+curl -X POST http://localhost:8000/api/todos/ \
+  -H "Content-Type: application/json" \
+  -d '{"title": "New TODO", "description": "Task description"}'
+
+# Get a specific TODO
+curl http://localhost:8000/api/todos/1/
+
+# Update a TODO
+curl -X PATCH http://localhost:8000/api/todos/1/ \
+  -H "Content-Type: application/json" \
+  -d '{"is_resolved": true}'
+
+# Delete a TODO
+curl -X DELETE http://localhost:8000/api/todos/1/
+
+# Toggle resolved status
+curl -X POST http://localhost:8000/api/todos/1/toggle_resolved/
+
+# List resolved TODOs
+curl http://localhost:8000/api/todos/resolved/
+
+# List overdue TODOs
+curl http://localhost:8000/api/todos/overdue/
+```
+
+### Interactive API Documentation
+
+Visit [http://localhost:8000/api/docs/](http://localhost:8000/api/docs/) for interactive Swagger documentation where you can:
+- Explore all available endpoints
+- Test API calls directly from your browser
+- View request/response schemas
+- See example payloads
+
+### API Features
+
+- Full CRUD operations (Create, Read, Update, Delete)
+- Pagination (10 items per page)
+- Filtering by resolved status
+- Full-text search across title and description
+- Sorting by created_at, due_date, title
+- Custom actions (toggle resolved, list resolved/unresolved/overdue)
+- OpenAPI/Swagger schema
+- Comprehensive validation and error handling
+
 ## Test Coverage
 
-The test suite achieves 99% code coverage with 38 tests covering:
-- Creating, editing, and deleting TODOs
+The test suite achieves 99% code coverage with 69 tests covering:
+- Creating, editing, and deleting TODOs (web and API)
 - Marking TODOs as resolved/unresolved
 - Model validations and ordering
 - View functionality and redirects
 - URL routing
 - Template rendering
 - Markdown rendering and formatting
+- Complete API endpoint testing (31 tests)
+- Pagination, filtering, and search
+- Custom API actions
 
 ## Future Enhancements
 
 - User authentication and authorization
 - TODO categories/tags
 - Priority levels
-- Search and filter functionality
-- API endpoints (REST/GraphQL)
+- Enhanced search and filter functionality
+- GraphQL API
 - Production deployment configuration
+- Real-time updates with WebSockets
 
 ## License
 

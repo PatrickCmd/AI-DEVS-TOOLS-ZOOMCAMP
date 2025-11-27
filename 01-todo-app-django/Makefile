@@ -98,6 +98,9 @@ test-templates: ## Run template tests only
 test-markdown: ## Run markdown tests only
 	docker compose run --rm web uv run pytest todo/tests/test_markdown.py -v
 
+test-api: ## Run API tests only
+	docker compose run --rm web uv run pytest todo/tests/test_api.py -v
+
 test-failed: ## Re-run only failed tests
 	docker compose run --rm web uv run pytest --lf
 
