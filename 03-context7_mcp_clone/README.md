@@ -12,12 +12,18 @@ This project implements an MCP server that:
 
 ## Documentation
 
+### Core Documentation
 - **[Implementation Plan](docs/IMPLEMENTATION_PLAN.md)** - Complete step-by-step implementation guide
 - **[Homework Assignment](docs/homework.md)** - Original homework requirements
+- **[Phase 4 & 5 Completion](docs/PHASE_4_5_COMPLETION.md)** - Summary of completed phases
+
+### Jina Reader Documentation
 - **[Jina Reader RAG Guide](docs/JINA_READER_RAG_GUIDE.md)** - Comprehensive guide on using Jina Reader for RAG applications
+- **[Jina Quick Reference](docs/JINA_QUICK_REFERENCE.md)** - Quick reference card with examples and troubleshooting
+
+### CLI & Features
 - **[CLI Usage Guide](docs/CLI_USAGE.md)** - CLI documentation for flexible repository indexing
 - **[Branch Detection Guide](docs/BRANCH_DETECTION.md)** - Smart branch detection documentation
-- **[Phase 4 & 5 Completion](docs/PHASE_4_5_COMPLETION.md)** - Summary of completed phases
 
 ---
 

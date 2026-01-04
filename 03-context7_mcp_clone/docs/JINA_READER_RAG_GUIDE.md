@@ -32,10 +32,10 @@ The simplest way to use Jina Reader is to prepend `https://r.jina.ai/` to any UR
 https://r.jina.ai/https://en.wikipedia.org/wiki/Artificial_intelligence
 ```
 
-### Command Line Example
+### Command Line Examples
 
 ```bash
-# Basic request
+# Basic request (returns markdown)
 curl "https://r.jina.ai/https://www.example.com"
 
 # With JSON output
@@ -43,6 +43,27 @@ curl -H "Accept: application/json" "https://r.jina.ai/https://www.example.com"
 
 # With image captions enabled
 curl -H "x-with-generated-alt: true" "https://r.jina.ai/https://blog.example.com/article"
+
+# Real example - Wikipedia article
+curl "https://r.jina.ai/https://en.wikipedia.org/wiki/Retrieval-augmented_generation"
+
+# Real example with JSON output
+curl -H "Accept: application/json" "https://r.jina.ai/https://en.wikipedia.org/wiki/Artificial_intelligence"
+```
+
+### URL Encoding for Special Characters
+
+When using URLs with spaces or special characters, you must URL-encode them:
+
+```bash
+# ❌ INCORRECT - Will fail with "Malformed input to a URL function"
+curl "https://r.jina.ai/https://example.com/path with spaces"
+
+# ✅ CORRECT - URL encode spaces as %20
+curl "https://r.jina.ai/https://example.com/path%20with%20spaces"
+
+# Use Python's urllib.parse.quote for encoding
+python3 -c "from urllib.parse import quote; print(quote('https://example.com/path with spaces?query=test'))"
 ```
 
 ## API Features
@@ -51,9 +72,33 @@ curl -H "x-with-generated-alt: true" "https://r.jina.ai/https://blog.example.com
 
 | Header | Output Format | Use Case |
 |--------|--------------|----------|
-| `Accept: application/json` | JSON with url, title, content | Programmatic access |
+| `Accept: application/json` | JSON with nested data object | Programmatic access (recommended) |
 | `Accept: text/event-stream` | Streaming markdown | Large documents |
 | Default | Plain markdown | Direct LLM consumption |
+
+**JSON Response Structure:**
+```json
+{
+  "code": 200,
+  "status": 20000,
+  "data": {
+    "title": "Page Title",
+    "description": "",
+    "url": "https://example.com",
+    "content": "Markdown content here...",
+    "publishedTime": "Sat, 03 Jan 2026 05:42:27 GMT",
+    "metadata": {
+      "lang": "en",
+      "viewport": "width=device-width, initial-scale=1"
+    },
+    "usage": {
+      "tokens": 123
+    }
+  }
+}
+```
+
+**Important**: Access the actual content via `response.json()['data']` - the response has a nested structure!
 
 ### Request Headers
 
@@ -71,13 +116,26 @@ curl -H "x-with-generated-alt: true" "https://r.jina.ai/https://blog.example.com
 
 ### Search API
 
-```bash
-# Web search with top 5 results
-curl "https://s.jina.ai/What is RAG in AI?"
+**Note**: The Search API (`s.jina.ai`) now requires authentication via API key.
 
-# Site-specific search
-curl "https://s.jina.ai/vector embeddings?site=openai.com&site=pinecone.io"
+```bash
+# Web search with top 5 results (requires API key)
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+  "https://s.jina.ai/What%20is%20RAG%20in%20AI%3F"
+
+# Site-specific search (requires API key)
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+  "https://s.jina.ai/vector%20embeddings?site=openai.com&site=pinecone.io"
+
+# Without API key, use Reader API on search engine results
+curl "https://r.jina.ai/https://www.google.com/search?q=RAG+in+AI"
 ```
+
+**Getting an API Key**:
+1. Sign up at [jina.ai](https://jina.ai/)
+2. Navigate to API settings
+3. Generate an API key
+4. Use in Authorization header: `Authorization: Bearer YOUR_API_KEY`
 
 ## Python Integration Examples
 
@@ -94,7 +152,7 @@ def fetch_url_as_markdown(url: str) -> dict:
         url: The target URL to convert
 
     Returns:
-        dict with 'url', 'title', 'content' keys
+        dict with 'url', 'title', 'content' keys from the 'data' field
     """
     reader_url = f"https://r.jina.ai/{url}"
 
@@ -104,14 +162,17 @@ def fetch_url_as_markdown(url: str) -> dict:
     )
     response.raise_for_status()
 
-    return response.json()
+    # Important: Response has nested structure - extract 'data' field
+    result = response.json()
+    return result['data']
 
 
 # Example usage
-result = fetch_url_as_markdown("https://en.wikipedia.org/wiki/Vector_database")
-print(f"Title: {result['title']}")
-print(f"Content length: {len(result['content'])} characters")
-print(f"First 500 chars:\n{result['content'][:500]}")
+data = fetch_url_as_markdown("https://en.wikipedia.org/wiki/Vector_database")
+print(f"Title: {data['title']}")
+print(f"Content length: {len(data['content'])} characters")
+print(f"Tokens used: {data['usage']['tokens']}")
+print(f"First 500 chars:\n{data['content'][:500]}")
 ```
 
 ### 2. Enhanced Fetching with Image Captions
@@ -149,7 +210,9 @@ def fetch_with_images(
     response = requests.get(reader_url, headers=headers)
     response.raise_for_status()
 
-    return response.json()
+    # Extract 'data' field from response
+    result = response.json()
+    return result['data']
 
 
 # Example: Fetch blog post with image descriptions
@@ -157,6 +220,8 @@ article = fetch_with_images(
     "https://blog.example.com/machine-learning-tutorial",
     enable_captions=True
 )
+print(f"Title: {article['title']}")
+print(f"Images with captions: Check content for 'Image [idx]:' tags")
 ```
 
 ### 3. Web Search for RAG
@@ -164,14 +229,21 @@ article = fetch_with_images(
 ```python
 import requests
 from urllib.parse import quote
+from typing import Optional
+import os
 
-def search_and_extract(query: str, sites: Optional[list] = None) -> dict:
+def search_and_extract(
+    query: str,
+    sites: Optional[list] = None,
+    api_key: Optional[str] = None
+) -> dict:
     """
     Search the web and get LLM-ready content from top 5 results.
 
     Args:
         query: Search query
         sites: Optional list of sites to restrict search
+        api_key: Jina API key (required for s.jina.ai)
 
     Returns:
         Aggregated search results in markdown
@@ -185,20 +257,47 @@ def search_and_extract(query: str, sites: Optional[list] = None) -> dict:
         site_params = "&".join([f"site={site}" for site in sites])
         search_url = f"{search_url}?{site_params}"
 
+    headers = {"Accept": "application/json"}
+
+    # Add API key if provided
+    if api_key:
+        headers["Authorization"] = f"Bearer {api_key}"
+
+    response = requests.get(search_url, headers=headers)
+    response.raise_for_status()
+
+    return response.json()
+
+
+# Example 1: With API key (recommended)
+api_key = os.getenv("JINA_API_KEY")  # Store in environment variable
+if api_key:
+    results = search_and_extract(
+        "retrieval augmented generation tutorial",
+        sites=["openai.com", "pinecone.io", "langchain.com"],
+        api_key=api_key
+    )
+
+# Example 2: Without API key - use Reader on search results page
+def search_via_reader(query: str) -> dict:
+    """Alternative: Use Reader API on Google search results."""
+    from urllib.parse import quote
+
+    search_query = quote(query)
+    google_search = f"https://www.google.com/search?q={search_query}"
+
+    # Use Reader API to extract search results
+    reader_url = f"https://r.jina.ai/{google_search}"
     response = requests.get(
-        search_url,
+        reader_url,
         headers={"Accept": "application/json"}
     )
     response.raise_for_status()
 
     return response.json()
 
-
-# Example: Search for RAG information
-results = search_and_extract(
-    "retrieval augmented generation tutorial",
-    sites=["openai.com", "pinecone.io", "langchain.com"]
-)
+# Example usage without API key
+results = search_via_reader("retrieval augmented generation tutorial")
 ```
 
 ### 4. Batch Processing for RAG Index Creation
