@@ -136,9 +136,9 @@ def search_fastmcp_docs(query: str, top_k: int = 5) -> str:
             filename = doc.get('filename', 'Unknown')
             content = doc.get('content', '')
 
-            # Get first 200 characters as preview
-            preview = content[:200].replace('\n', ' ').strip()
-            if len(content) > 200:
+            # Get first 500 characters as preview
+            preview = content[:500].replace('\n', ' ').strip()
+            if len(content) > 500:
                 preview += "..."
 
             output.append(f"{i}. {filename}")
