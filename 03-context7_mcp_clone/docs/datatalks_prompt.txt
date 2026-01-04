@@ -1,0 +1,2 @@
+Count how many times the word "data" appears on https://datatalks.club/
+Use available MCP tools for that
