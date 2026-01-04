@@ -1,0 +1,93 @@
+[
+  {
+    "model": "pets.category",
+    "pk": 1,
+    "fields": {
+      "name": "Dogs"
+    }
+  },
+  {
+    "model": "pets.category",
+    "pk": 2,
+    "fields": {
+      "name": "Cats"
+    }
+  },
+  {
+    "model": "pets.category",
+    "pk": 3,
+    "fields": {
+      "name": "Birds"
+    }
+  },
+  {
+    "model": "pets.category",
+    "pk": 4,
+    "fields": {
+      "name": "Fish"
+    }
+  },
+  {
+    "model": "pets.category",
+    "pk": 5,
+    "fields": {
+      "name": "Reptiles"
+    }
+  },
+  {
+    "model": "pets.tag",
+    "pk": 1,
+    "fields": {
+      "name": "friendly"
+    }
+  },
+  {
+    "model": "pets.tag",
+    "pk": 2,
+    "fields": {
+      "name": "playful"
+    }
+  },
+  {
+    "model": "pets.tag",
+    "pk": 3,
+    "fields": {
+      "name": "calm"
+    }
+  },
+  {
+    "model": "pets.tag",
+    "pk": 4,
+    "fields": {
+      "name": "trained"
+    }
+  },
+  {
+    "model": "pets.tag",
+    "pk": 5,
+    "fields": {
+      "name": "energetic"
+    }
+  },
+  {
+    "model": "pets.tag",
+    "pk": 6,
+    "fields": {
+      "name": "gentle"
+    }
+  },
+  {
+    "model": "pets.tag",
+    "pk": 7,
+    "fields": {
+      "name": "social"
+    }
+  },
+  {
+    "model": "pets.tag",
+    "pk": 8,
+    "fields": {
+      "name": "independent"
+    }
+  }
+]
