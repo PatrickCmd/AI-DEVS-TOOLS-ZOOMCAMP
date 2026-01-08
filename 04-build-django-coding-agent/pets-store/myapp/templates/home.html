@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Pets Store App{% endblock %}
+
+{% block content %}
+<section class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-600 via-fuchsia-600 to-rose-600 text-white p-8 md:p-12 shadow-lg">
+  <div class="absolute inset-0 opacity-15">
+    <div class="absolute -top-10 -right-10 w-56 h-56 bg-white rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-10 -left-10 w-56 h-56 bg-white rounded-full blur-3xl"></div>
+  </div>
+
+  <div class="relative">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+      <div>
+        <h1 class="text-3xl md:text-5xl font-black tracking-tight">🐾 Pets Store App</h1>
+        <p class="mt-3 text-white/90 max-w-2xl">Adopt a new friend and grab the essentials — food 🍖, toys 🧸, grooming ✨, and more.</p>
+
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+          <a href="{% url 'catalog' %}" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-slate-900 font-semibold shadow hover:shadow-md transition">
+            <i class="fas fa-store"></i>
+            Browse catalog
+          </a>
+          <a href="/admin/" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 border border-white/20 font-semibold hover:bg-white/15 transition">
+            <i class="fas fa-user-shield"></i>
+            Admin
+          </a>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 w-full md:w-auto">
+        <div class="rounded-2xl bg-white/10 border border-white/15 p-4">
+          <div class="text-2xl font-black">{{ stats.in_stock_pets }}</div>
+          <div class="text-sm text-white/80">Pets available 🐶🐱</div>
+        </div>
+        <div class="rounded-2xl bg-white/10 border border-white/15 p-4">
+          <div class="text-2xl font-black">{{ stats.in_stock_products }}</div>
+          <div class="text-sm text-white/80">Products in stock 🛒</div>
+        </div>
+        <div class="rounded-2xl bg-white/10 border border-white/15 p-4">
+          <div class="text-2xl font-black">{{ stats.pets }}</div>
+          <div class="text-sm text-white/80">Total pets 🐾</div>
+        </div>
+        <div class="rounded-2xl bg-white/10 border border-white/15 p-4">
+          <div class="text-2xl font-black">{{ stats.products }}</div>
+          <div class="text-sm text-white/80">Total products 🎁</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mt-10">
+  <div class="flex items-end justify-between gap-4">
+    <div>
+      <h2 class="text-2xl font-extrabold tracking-tight">Featured pets</h2>
+      <p class="text-slate-600 mt-1">Hand-picked cuties ready for a new home.</p>
+    </div>
+    <a class="text-indigo-700 font-semibold hover:underline" href="{% url 'catalog' %}">See all <i class="fas fa-arrow-right ml-1"></i></a>
+  </div>
+
+  {% if featured_pets %}
+  <div class="mt-5 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    {% for pet in featured_pets %}
+    <a href="{{ pet.get_absolute_url }}" class="group rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition overflow-hidden">
+      <div class="p-5">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <div class="text-sm text-slate-500">{{ pet.get_pet_type_display }}{% if pet.breed %} • {{ pet.breed }}{% endif %}</div>
+            <div class="mt-1 text-xl font-extrabold tracking-tight group-hover:text-indigo-700 transition">{{ pet.emoji }} {{ pet.name }}</div>
+          </div>
+          <div class="text-right">
+            <div class="text-sm text-slate-500">From</div>
+            <div class="text-lg font-black">${{ pet.price }}</div>
+          </div>
+        </div>
+        <div class="mt-3 text-sm text-slate-600 line-clamp-2">{{ pet.description|default:"A friendly companion looking for a loving family." }}</div>
+
+        <div class="mt-4 flex items-center justify-between">
+          <span class="inline-flex items-center gap-2 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+            <i class="fas fa-check-circle"></i> In stock
+          </span>
+          <span class="text-sm font-semibold text-indigo-700">View <i class="fas fa-chevron-right ml-1 text-xs"></i></span>
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="mt-5 rounded-2xl bg-white border border-slate-200 p-6 text-slate-700">
+    <i class="fas fa-info-circle text-indigo-600 mr-2"></i>
+    No pets yet. Add some in the <a class="font-semibold text-indigo-700 hover:underline" href="/admin/">admin</a>.
+  </div>
+  {% endif %}
+</section>
+
+<section class="mt-12">
+  <div class="flex items-end justify-between gap-4">
+    <div>
+      <h2 class="text-2xl font-extrabold tracking-tight">Popular products</h2>
+      <p class="text-slate-600 mt-1">Everything your pet needs — in one place.</p>
+    </div>
+    <a class="text-indigo-700 font-semibold hover:underline" href="{% url 'catalog' %}">Shop all <i class="fas fa-arrow-right ml-1"></i></a>
+  </div>
+
+  {% if featured_products %}
+  <div class="mt-5 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    {% for p in featured_products %}
+    <a href="{{ p.get_absolute_url }}" class="group rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition p-5">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <div class="text-sm text-slate-500">{{ p.get_category_display }}</div>
+          <div class="mt-1 text-xl font-extrabold tracking-tight group-hover:text-indigo-700 transition">
+            <i class="fas {{ p.icon }} mr-2 text-indigo-600"></i>{{ p.name }}
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="text-sm text-slate-500">Price</div>
+          <div class="text-lg font-black">${{ p.price }}</div>
+        </div>
+      </div>
+      <div class="mt-3 text-sm text-slate-600 line-clamp-2">{{ p.description|default:"Great pick for happy tails." }}</div>
+
+      <div class="mt-4 flex items-center justify-between">
+        <span class="inline-flex items-center gap-2 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+          <i class="fas fa-check-circle"></i> In stock
+        </span>
+        <span class="text-sm font-semibold text-indigo-700">Details <i class="fas fa-chevron-right ml-1 text-xs"></i></span>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="mt-5 rounded-2xl bg-white border border-slate-200 p-6 text-slate-700">
+    <i class="fas fa-info-circle text-indigo-600 mr-2"></i>
+    No products yet. Add some in the <a class="font-semibold text-indigo-700 hover:underline" href="/admin/">admin</a>.
+  </div>
+  {% endif %}
+</section>
+{% endblock %}
