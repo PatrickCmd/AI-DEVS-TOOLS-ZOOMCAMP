@@ -144,7 +144,7 @@ uv add openai python-dotenv toyaikit
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/PatrickCmd/AI-DEVS-TOOLS-ZOOMCAMP.git
 cd 04-build-django-coding-agent
 ```
 
