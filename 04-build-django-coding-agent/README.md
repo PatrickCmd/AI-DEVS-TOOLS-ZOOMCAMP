@@ -119,7 +119,7 @@ A **coding agent** is an AI system that can autonomously write, modify, and mana
 ### Required Software
 - **Python 3.12+**
 - **uv** (Python package manager)
-- **OpenAI API Key** with access to GPT-4o or GPT-4o-mini, GPT-5+, or GPT-5-mini
+- **OpenAI API Key** with access to GPT-4o or GPT-4o-mini, GPT-5+ or GPT-5-mini
 
 ### Python Packages
 ```bash
