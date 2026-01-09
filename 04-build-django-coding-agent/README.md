@@ -236,10 +236,11 @@ First, let's understand the basics with a simple joke-making example:
 
 ```python
 from openai import OpenAI
+import json
+import random
 
 client = OpenAI()
 
-import random
 
 def make_joke(name):
     jokes = [
@@ -282,8 +283,6 @@ response = client.responses.create(
 
 # Agent will call the make_joke function
 # You execute it and return results
-
-import json
 
 for item in response.output:
     print(f"Item type: {item.type}")
