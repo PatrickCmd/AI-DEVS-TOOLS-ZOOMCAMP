@@ -1,0 +1,13 @@
+# Requirements for OpenAI Agent Clients
+
+# OpenAI SDK
+openai>=1.12.0
+
+# Environment management
+python-dotenv>=1.0.0
+
+# FastMCP client for direct MCP server connection
+fastmcp>=2.14.2
+
+# Optional: For advanced features
+requests>=2.31.0

@@ -9,6 +9,7 @@ wheels/
 *.egg-info
 
 # Virtual environments
+venv/
 .venv
 .python-version
 .ipynb_checkpoints
