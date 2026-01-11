@@ -268,8 +268,10 @@ def code_review_prompt(language: str, code: str):
     """Generate a code review prompt."""
     return f"""Please review this {language} code:
 
+```
+
 ```{language}
-{code}
+code
 ```
 
 Focus on:
@@ -277,8 +279,8 @@ Focus on:
 - Potential bugs or security issues
 - Performance optimizations
 - Readability and maintainability
-"""
 
+```python
 @mcp.prompt()
 def debug_helper_prompt(error_message: str, stack_trace: str):
     """Generate a debugging assistance prompt."""
@@ -288,13 +290,14 @@ Error: {error_message}
 
 Stack trace:
 {stack_trace}
+```
+
 
 Please help me:
 1. Identify the root cause
 2. Suggest fixes
 3. Explain how to prevent this in the future
-"""
-```
+
 
 **Component Summary**:
 
