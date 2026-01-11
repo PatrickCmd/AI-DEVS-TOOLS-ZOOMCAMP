@@ -122,7 +122,7 @@ def fcc_news_search(query: str, max_results: int = 3, include_content: bool = Fa
     return results or [{"message": "No results found for your query"}]
 
 @mcp.tool()
-def fcc_youtube_search(query: str, max_results: int = 3, include_description: bool = True, match_all_terms: bool = False):
+def fcc_youtube_search(query: str, max_results: int = 3, include_content: bool = True, match_all_terms: bool = False):
     """
     Search FreeCodeCamp's YouTube channel via RSS with comprehensive metadata.
 
@@ -135,7 +135,7 @@ def fcc_youtube_search(query: str, max_results: int = 3, include_description: bo
     Args:
         query (str): The search term(s) to look for. Can be multiple terms separated by spaces.
         max_results (int, optional): Maximum results to return. Defaults to 3.
-        include_description (bool, optional): Include video descriptions. Defaults to True.
+        include_content (bool, optional): Include video descriptions. Defaults to True.
         match_all_terms (bool, optional): If True, ALL terms must be present. If False, ANY term matches. Defaults to False.
 
     Returns:
@@ -203,7 +203,7 @@ def fcc_youtube_search(query: str, max_results: int = 3, include_description: bo
             }
 
             # Add description if requested
-            if include_description and description:
+            if include_content and description:
                 # Convert HTML to markdown if needed
                 if '<' in description and '>' in description:
                     description = md(description, strip=['script', 'style']).strip()

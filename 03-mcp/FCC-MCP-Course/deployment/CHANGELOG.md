@@ -4,6 +4,48 @@ All notable changes to the FreeCodeCamp MCP project.
 
 ---
 
+## [2026-01-11] - Parameter Consistency Fix
+
+### Fixed
+- **Validation errors in fcc_youtube_search**
+  - Error: "Unexpected keyword argument 'include_content'"
+  - Root cause: Inconsistent parameter naming between search functions
+  - `fcc_news_search` used `include_content` but `fcc_youtube_search` used `include_description`
+  - AI models were confusing the two parameters, causing intermittent validation errors
+
+### Changed
+- **Renamed parameter in fcc_youtube_search**:
+  - `include_description` → `include_content`
+  - Now consistent with `fcc_news_search` parameter naming
+  - Updated function signature, documentation, and implementation
+
+### Benefits
+- ✅ No more "unexpected keyword argument" errors
+- ✅ Consistent API across all search functions
+- ✅ AI models less likely to make parameter mistakes
+- ✅ Better developer experience (same parameter names)
+- ✅ Future-proof for additional search functions
+
+### Added
+- Created `test_parameter_consistency.py` - Tests parameter consistency
+- Created `PARAMETER_CONSISTENCY_FIX.md` - Comprehensive documentation
+
+### Testing
+- ✅ News search with `include_content=True` - Works correctly
+- ✅ News search with `include_content=False` - Works correctly
+- ✅ YouTube search with `include_content=True` - Works correctly
+- ✅ YouTube search with `include_content=False` - Works correctly
+- ✅ No validation errors
+
+### Breaking Changes
+⚠️ **Breaking**: `fcc_youtube_search` parameter renamed
+- Old: `include_description=True`
+- New: `include_content=True`
+- MCP clients get updated schemas automatically
+- Manual API users need to update parameter names
+
+---
+
 ## [2026-01-11] - Empty Response Fix
 
 ### Fixed

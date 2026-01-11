@@ -49,7 +49,8 @@ markdownify>=0.11.6
 ### 3. Enhanced YouTube Search (`fcc_youtube_search`)
 
 **New Parameters**:
-- `include_description`: Boolean to include video descriptions (default: `True`)
+- `include_content`: Boolean to include video descriptions (default: `True`)
+  - **Note**: Previously named `include_description`, renamed to `include_content` for consistency
 
 **Enhanced Return Fields**:
 ```python
