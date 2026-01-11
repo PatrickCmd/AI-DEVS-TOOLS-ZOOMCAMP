@@ -83,8 +83,7 @@ class AdvancedFCCAgentClient:
         self,
         server_url: str = "https://freedcodecamp-content.fastmcp.app/mcp",
         model: str = "gpt-5-mini",
-        temperature: float = 0.7,
-        max_tokens: int = 1000
+        max_output_tokens: int = 2000
     ):
         """
         Initialize the advanced agent client.
@@ -95,13 +94,12 @@ class AdvancedFCCAgentClient:
                             For local: "http://localhost:8000/mcp"
             model (str): OpenAI model to use. Must support MCP tools.
                         Recommended: gpt-5-mini (default), gpt-4.1, gpt-4.5, or gpt-5
-            temperature (float): Response randomness (0-2)
-            max_tokens (int): Maximum tokens in response
+                        Note: GPT-5 models don't support temperature parameter
+            max_output_tokens (int): Maximum tokens in response (default: 1000)
         """
         self.server_url = server_url
         self.model = model
-        self.temperature = temperature
-        self.max_tokens = max_tokens
+        self.max_output_tokens = max_output_tokens
         self.client = OpenAI()
         self.conversation = ConversationManager()
 
@@ -153,8 +151,7 @@ class AdvancedFCCAgentClient:
         print("="*70)
         print(f"✓ Server: {self.server_url}")
         print(f"✓ Model: {self.model}")
-        print(f"✓ Temperature: {self.temperature}")
-        print(f"✓ Max Tokens: {self.max_tokens}")
+        print(f"✓ Max Output Tokens: {self.max_output_tokens}")
         print("="*70 + "\n")
 
     def query(
@@ -189,12 +186,34 @@ class AdvancedFCCAgentClient:
                 instructions=self.system_instructions,
                 tools=[self.mcp_tool],
                 input=user_query,
-                temperature=self.temperature,
-                max_output_tokens=self.max_tokens,
+                max_output_tokens=self.max_output_tokens,
             )
 
             # Extract response
             output = response.output_text
+
+            # Check if response is incomplete
+            if hasattr(response, 'incomplete_details') and response.incomplete_details:
+                if response.incomplete_details.reason == 'max_output_tokens':
+                    print("⚠️  Response incomplete: max_output_tokens reached")
+                    print("   Consider increasing max_output_tokens for fuller responses\n")
+
+            # If output_text is empty but we have tool calls, extract useful info
+            if not output or output.strip() == "":
+                if hasattr(response, 'output') and response.output:
+                    # Look for MCP tool calls in output
+                    tool_outputs = []
+                    for item in response.output:
+                        if hasattr(item, 'type') and item.type == 'mcp_call':
+                            if hasattr(item, 'output') and item.output:
+                                tool_outputs.append(f"Tool: {item.name}\nResult: {item.output[:500]}...")
+
+                    if tool_outputs:
+                        output = "I found some information:\n\n" + "\n\n".join(tool_outputs)
+                    else:
+                        output = "I processed your request but didn't generate a text response. Try increasing max_output_tokens."
+                else:
+                    output = "No response generated. This may be due to token limits or other constraints."
 
             # Add to conversation history
             self.conversation.add_message("assistant", output)
@@ -335,7 +354,8 @@ def demo_basic_usage():
     # Default to FastMCP Cloud deployment
     agent = AdvancedFCCAgentClient(
         server_url=os.getenv("MCP_SERVER_URL", "https://freedcodecamp-content.fastmcp.app/mcp"),
-        model="gpt-5-mini"  # MCP requires gpt-5-mini, gpt-4.1 or compatible
+        model="gpt-5-mini",  # MCP requires gpt-5-mini, gpt-4.1 or compatible
+        max_output_tokens=2000  # Higher limit for complete responses
     )
 
     # Single query
@@ -349,7 +369,8 @@ def demo_multi_turn():
     # Default to FastMCP Cloud deployment
     agent = AdvancedFCCAgentClient(
         server_url=os.getenv("MCP_SERVER_URL", "https://freedcodecamp-content.fastmcp.app/mcp"),
-        model="gpt-5-mini"
+        model="gpt-5-mini",
+        max_output_tokens=2500  # Higher limit for multi-turn conversations
     )
 
     # Multiple related queries
@@ -371,7 +392,7 @@ def demo_interactive():
     agent = AdvancedFCCAgentClient(
         server_url=os.getenv("MCP_SERVER_URL", "https://freedcodecamp-content.fastmcp.app/mcp"),
         model="gpt-5-mini",
-        temperature=0.8
+        max_output_tokens=3000  # Higher limit for interactive chat
     )
 
     agent.chat()
