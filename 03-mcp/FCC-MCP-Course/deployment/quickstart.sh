@@ -70,7 +70,7 @@ print_success "Virtual environment activated"
 # Install dependencies
 print_info "Installing dependencies..."
 pip install -q --upgrade pip
-pip install -q -r requirements_deploy.txt
+pip install -q -r requirements.txt
 pip install -q -r requirements_client.txt
 print_success "Dependencies installed"
 

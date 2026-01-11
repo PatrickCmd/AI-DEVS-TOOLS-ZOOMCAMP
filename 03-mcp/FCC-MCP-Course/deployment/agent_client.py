@@ -25,14 +25,16 @@ class FCCAgentClient:
     - Getting inspirational messages
     """
 
-    def __init__(self, server_url: str = "http://localhost:8000", model: str = "gpt-4.1"):
+    def __init__(self, server_url: str = "https://freedcodecamp-content.fastmcp.app/mcp", model: str = "gpt-5-mini"):
         """
         Initialize the agent client.
 
         Args:
             server_url (str): URL where the MCP server is running
+                            Default: FastMCP Cloud deployment
+                            For local: "http://localhost:8000/mcp"
             model (str): OpenAI model to use. Must support MCP tools.
-                        Recommended: gpt-4.1 (default), gpt-4.5, or gpt-5
+                        Recommended: gpt-5-mini (default), gpt-4.1, gpt-4.5, or gpt-5
                         Note: gpt-4o/gpt-4o-mini may not support MCP type tools
         """
         self.server_url = server_url
@@ -44,20 +46,15 @@ class FCCAgentClient:
         if not any(m in model for m in compatible_models):
             print(f"⚠️  Warning: Model '{model}' may not support MCP tools.")
             print(f"   Recommended models: {', '.join(compatible_models)}")
-            print(f"   If you encounter errors, try: model='gpt-4.1' or 'gpt-5-mini'")
+            print(f"   If you encounter errors, try: model='gpt-5-mini' or 'gpt-4.1'")
 
-        # Configure MCP tool for OpenAI
-        # Note: Per FastMCP docs, server_url should include trailing slash /mcp/
-        # OpenAI Responses API requires gpt-4.1 or compatible model for MCP support
+        # Configure MCP tool for OpenAI Responses API
+        # Using FastMCP Cloud deployment (publicly accessible)
         self.mcp_tool = {
             "type": "mcp",
-            "server_label": "fcc_content_explorer",
-            "server_url": f"{server_url}/mcp/",  # Trailing slash required
-            "require_approval": {
-                "never": {
-                    "tool_names": ["fcc_news_search", "fcc_youtube_search", "fcc_secret_message"]
-                }
-            }
+            "server_label": "freedcodecamp-content",
+            "server_url": server_url,
+            "require_approval": "never",
         }
 
         print(f"✓ Agent initialized with MCP server at {server_url}")
@@ -175,8 +172,10 @@ def main():
     Main function demonstrating different usage patterns.
     """
     # Configuration
-    SERVER_URL = os.getenv("MCP_SERVER_URL", "http://localhost:8000")
-    MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1")  # MCP requires gpt-4.1 or compatible
+    # Default to FastMCP Cloud deployment (publicly accessible)
+    # For local development, set MCP_SERVER_URL=http://localhost:8000/mcp in .env
+    SERVER_URL = os.getenv("MCP_SERVER_URL", "https://freedcodecamp-content.fastmcp.app/mcp")
+    MODEL = os.getenv("OPENAI_MODEL", "gpt-5-mini")  # MCP requires gpt-5-mini, gpt-4.1 or compatible
 
     print("\n" + "="*60)
     print("🚀 FreeCodeCamp MCP Agent Client")

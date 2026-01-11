@@ -81,8 +81,8 @@ class AdvancedFCCAgentClient:
 
     def __init__(
         self,
-        server_url: str = "http://localhost:8000",
-        model: str = "gpt-4.1",
+        server_url: str = "https://freedcodecamp-content.fastmcp.app/mcp",
+        model: str = "gpt-5-mini",
         temperature: float = 0.7,
         max_tokens: int = 1000
     ):
@@ -91,8 +91,10 @@ class AdvancedFCCAgentClient:
 
         Args:
             server_url (str): URL where the MCP server is running
+                            Default: FastMCP Cloud deployment
+                            For local: "http://localhost:8000/mcp"
             model (str): OpenAI model to use. Must support MCP tools.
-                        Recommended: gpt-4.1 (default), gpt-4.5, or gpt-5
+                        Recommended: gpt-5-mini (default), gpt-4.1, gpt-4.5, or gpt-5
             temperature (float): Response randomness (0-2)
             max_tokens (int): Maximum tokens in response
         """
@@ -109,12 +111,12 @@ class AdvancedFCCAgentClient:
             print(f"⚠️  Warning: Model '{model}' may not support MCP tools.")
             print(f"   Recommended models: {', '.join(compatible_models)}")
 
-        # Configure MCP tool for OpenAI
-        # Note: Per FastMCP docs, server_url should include trailing slash /mcp/
+        # Configure MCP tool for OpenAI Responses API
+        # Using FastMCP Cloud deployment (publicly accessible)
         self.mcp_tool = {
             "type": "mcp",
-            "server_label": "fcc_content_explorer",
-            "server_url": f"{server_url}/mcp/",  # Trailing slash required
+            "server_label": "freedcodecamp-content",
+            "server_url": server_url,
             "require_approval": "never",
         }
 
@@ -330,9 +332,10 @@ def demo_basic_usage():
     """Demonstrate basic usage."""
     print("\n🎯 Demo 1: Basic Usage\n")
 
+    # Default to FastMCP Cloud deployment
     agent = AdvancedFCCAgentClient(
-        server_url=os.getenv("MCP_SERVER_URL", "http://localhost:8000"),
-        model="gpt-4.1"  # MCP requires gpt-4.1 or compatible
+        server_url=os.getenv("MCP_SERVER_URL", "https://freedcodecamp-content.fastmcp.app/mcp"),
+        model="gpt-5-mini"  # MCP requires gpt-5-mini, gpt-4.1 or compatible
     )
 
     # Single query
@@ -343,9 +346,10 @@ def demo_multi_turn():
     """Demonstrate multi-turn conversation."""
     print("\n🎯 Demo 2: Multi-Turn Conversation\n")
 
+    # Default to FastMCP Cloud deployment
     agent = AdvancedFCCAgentClient(
-        server_url=os.getenv("MCP_SERVER_URL", "http://localhost:8000"),
-        model="gpt-4o-mini"
+        server_url=os.getenv("MCP_SERVER_URL", "https://freedcodecamp-content.fastmcp.app/mcp"),
+        model="gpt-5-mini"
     )
 
     # Multiple related queries
@@ -363,9 +367,10 @@ def demo_interactive():
     """Demonstrate interactive mode."""
     print("\n🎯 Demo 3: Interactive Mode\n")
 
+    # Default to FastMCP Cloud deployment
     agent = AdvancedFCCAgentClient(
-        server_url=os.getenv("MCP_SERVER_URL", "http://localhost:8000"),
-        model="gpt-4o-mini",
+        server_url=os.getenv("MCP_SERVER_URL", "https://freedcodecamp-content.fastmcp.app/mcp"),
+        model="gpt-5-mini",
         temperature=0.8
     )
 

@@ -1,6 +1,7 @@
 # Required packages for deployment
 fastmcp>=2.14.2
 feedparser>=6.0.12
+markdownify>=0.11.6
 
 # Note: These are minimum versions. You might want to use
 # the latest compatible versions in production.
