@@ -13,7 +13,7 @@ mcp = FastMCP(name="FreeCodeCamp Content Explorer (Deployed)")
 
 # Step 3: Define the service tools
 @mcp.tool()
-def fcc_news_search(query: str, max_results: int = 3, include_content: bool = False, match_all_terms: bool = False):
+def fcc_news_search(query: str, max_results: int = 5, include_content: bool = False, match_all_terms: bool = False):
     """
     Search FreeCodeCamp's news feed via RSS with comprehensive metadata.
 
@@ -122,7 +122,7 @@ def fcc_news_search(query: str, max_results: int = 3, include_content: bool = Fa
     return results or [{"message": "No results found for your query"}]
 
 @mcp.tool()
-def fcc_youtube_search(query: str, max_results: int = 3, include_content: bool = True, match_all_terms: bool = False):
+def fcc_youtube_search(query: str, max_results: int = 5, include_content: bool = True, match_all_terms: bool = False):
     """
     Search FreeCodeCamp's YouTube channel via RSS with comprehensive metadata.
 
